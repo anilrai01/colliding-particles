@@ -102,8 +102,8 @@ function Particle(x,y,rad,color){
     this.x = x;
     this.y = y;
     this.velocity = {
-        x: Math.random() * 2 + 1,
-        y: Math.random() * 2 + 1,
+        x: Math.random() - 0.5,
+        y: Math.random() - 0.5,
     }
     this.rad = rad;
     this.mass = 1;
@@ -122,7 +122,7 @@ function Particle(x,y,rad,color){
 
     this.update = particleArray => {
 
-        // this.draw();
+        this.draw();
 
         //Collision Detection // Elastic Collision
         for(let i = 0; i < particleArray.length; i++){
@@ -195,6 +195,8 @@ function init(){
         particleArray.push(new Particle(x, y, rad, color));
 
     }
+
+    console.log("Working");
 }
 
 init();

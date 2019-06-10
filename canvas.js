@@ -7,8 +7,8 @@ canvas.height = window.innerHeight;
 var ctx = canvas.getContext('2d');
 
 var mouse = {
-    x: innerWidth / 2,
-    y: innerHeight / 2,
+    x: undefined,
+    y: undefined,
 }
 
 var colorArray = [
@@ -16,8 +16,8 @@ var colorArray = [
     '#FF2828',
     '#CF398E',
     '#FF7E14',
-    '#FFEB14',
-    '#58E912',
+    // '#FFEB14',
+    // '#58E912',
 ];
 
 window.addEventListener('resize', function(){
@@ -32,6 +32,9 @@ window.addEventListener('mousemove', function(event){
     mouse.y = event.clientY;
 });
 
+function randomColor(color){
+    return colorArray[Math.floor(Math.random() * color.length )];
+}
 /**
  * Rotates coordinate system for velocities
  *
@@ -109,11 +112,18 @@ function Particle(x,y,rad,color){
     this.mass = 1;
     // this.color = Math.floor(Math.random() * colorArray.length);
     this.color = color;
+    this.opacity  = 0;
 
     this.draw = () => {
         ctx.beginPath();
         ctx.arc(this.x,this.y, this.rad, 0,Math.PI * 2, false);
-        // ctx.fillStyle = colorArray[this.color];
+
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.restore();
+
         ctx.strokeStyle = this.color;
         ctx.stroke();
         // Update the Movement
@@ -148,6 +158,14 @@ function Particle(x,y,rad,color){
         this.x += this.velocity.x;
         this.y += this.velocity.y;
 
+        if(getDistance(mouse.x, mouse.y, this.x, this.y) < 90 && this.opacity < 0.2){
+            this.opacity += 0.02;
+        }else if(this.opacity > 0){
+            this.opacity -= 0.02;
+
+            this.opacity = Math.max(0, this.opacity);
+        }
+
     }
 }
 
@@ -165,14 +183,14 @@ let particleArray;
 function init(){
 // Creating numbers of Objects
     particleArray = [];
-    for(let i = 0; i< 100; i++){
+    for(let i = 0; i< 250; i++){
 
         let rad = 15;
         let x = Math.random() * (innerWidth - 2*rad) + rad;
         let y = Math.random() * (innerHeight -2*rad) + rad;
         // let dx = Math.floor(Math.random()* 5 + 1);
         // let dy = Math.floor(Math.random()* 5 + 1);
-        let color = 'blue';
+        let color = randomColor(colorArray);
 
         if(i !== 0){
             for(let j = 0; j<particleArray.length; j++){
